@@ -262,8 +262,10 @@ function onnx_slice(
         data::AbstractArray,
         starts::VecOrMat{Int}, ends::VecOrMat{Int},
         axes::Vector{Int}=Int[], steps::Vector{Int}=Int[])
+    dims = size(data) 
     axes = isempty(axes) ? collect(0:ndims(data)-1) : axes
     steps = isempty(steps) ? [1 for i=1:ndims(data)] : steps
+    ends = [clamp(e, 0, dims[axes[i]]) for (i, e) in enumerate(ends)]
     @assert all(starts .>= 0) "Negative indices are not supported yet"
     @assert all(ends .>= 0) "Negative indices are not supported yet"
     # construct ranges, adjusting starts to 1-based indexing
